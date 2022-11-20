@@ -1,10 +1,19 @@
 class Task {
-    name
+    /** @type {String} */
+    name;
+    
+    /** @type {Number} */
     #id;
+    
+    /** @type {HTMLLIElement} */
     #element;
+    
+    /** @type {Number} */
     static lastId = 1;
-    /*
-     @param {String} name task name
+    
+    /**
+     * @param {String} name
+     * @param {TaskList} taskList
      */
     constructor(name, taskList) {
         this.name = name;
@@ -45,12 +54,17 @@ class Task {
         
         Task.lastId++;
     }
+    
+    /** @returns {Number} */
     get id() {
         return this.#id;
     }
+    
+    /** @returns {HTMLLIElement} */
     get element() {
         return this.#element;
     }
+    
     update(){
         this.#element.firstElementChild.innerText = this.name;
         this.#element.dataset.id = this.#id;
@@ -59,16 +73,40 @@ class Task {
     }
 }
 class TaskList {
+    /** @type {Array<Task>} */
     #list = [];
+    
+    /**
+     * @callback onAdd
+     * @param {Task} task
+     * @param {Array<Task>} list
+     */
+    /** @type {onAdd} */
     onAdd = (task, list) => {};
+    
+    /**
+     * @callback onRemove
+     * @param {Task} deletedTask
+     * @param {Array<Task>} list
+     */
+    /** @type {onRemove} */
     onRemove = (deletedTask, list) => {};
+    
+    /** @returns {Array<Task>} */
     get list() {
         return this.#list;
     }
+    
+    /** @param {Task} task */
     addTask(task) {
         this.#list.push(task);
         this.onAdd(task, this.#list);
     }
+    
+    /**
+     * @param {Number} id
+     * @returns {Boolean}
+     */
     removeTask(id) {
         let taskSet = new Set(this.#list);
         let deleted = this.#list.filter(v => {
@@ -83,9 +121,20 @@ class TaskList {
     }
 }
 class TaskComponent {
+    /** @type {HTMLInputElement} */
     #input;
+    
+    /** @type {HTMLButtonElement} */
     #addButton;
+    
+    /** @type {HTMLOListElement} */
     #ol;
+    
+    /**
+     * @param {String} inputElementId
+     * @param {String} addButtonElementId
+     * @param {String} olElementId
+     */
     constructor(inputElementId, addButtonElementId, olElementId) {
         this.#input = document.getElementById(inputElementId);
         this.#addButton = document.getElementById(addButtonElementId);
@@ -96,15 +145,27 @@ class TaskComponent {
             else return;
         });
     }
+    
     clear() {
         this.#input.value = "";
     }
-    set onAddButtonClick(callBack=(btn, ev)=>{}) {
-        this.#addButton.addEventListener("click", callBack);
+    
+    /**
+     * @callback onAddButtonCallback
+     * @param {HTMLButtonElement} btn
+     * @param {MouseEvent} ev
+     */
+    /** @param {onAddButtonCallback} callBack */
+    onAddButtonClick(callback=(btn, ev)=>{}) {
+        this.#addButton.addEventListener("click", callback);
     }
+    
+    /** @returns {String} */
     get inputValue() {
         return this.#input.value;
     }
+    
+    /** @param {TaskList} taskList */
     update(taskList) {
         if (this.#ol.hasChildNodes()){
             this.#ol.childNodes.forEach(el => {
@@ -119,13 +180,16 @@ class TaskComponent {
     }
 }
 
+/** @type {TaskList} */
 const tasks = new TaskList();
+
+/** @type {TaskComponent} */
 const taskComponent = new TaskComponent("task-name", "add", "list");
 
-taskComponent.onAddButtonClick = (btn, ev)=>{
+taskComponent.onAddButtonClick((btn, ev)=>{
     if (taskComponent.inputValue!='')
         tasks.addTask(new Task(taskComponent.inputValue, tasks));
-}
+});
 
 tasks.onAdd = (task, list) => {
     taskComponent.update(tasks);
