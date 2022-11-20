@@ -1,0 +1,65 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body {
+    display: grid;
+    place-items: center;
+    font-size: 15pt;
+    min-height: 100vh;
+    background-color: #232323;
+}
+.container {
+    border-radius: 7px;
+    padding: 13px;
+    background-color: #eee;
+    box-shadow: 2px 2px 20px #555;
+}
+.container .inputs {
+    width: 100%;
+    display: flex;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+.container .inputs * {
+    font-size: 10.5pt;
+}
+.container .inputs input {
+    border: 1px #111 solid;
+    border-radius: 5px 0px 0px 5px;
+    border-right: none;
+    background-color: #fff;
+    padding: 2px 7px;
+    outline: none;
+}
+.container .inputs button {
+    border-radius: 0px 5px 5px 0px;
+    border: none;
+    background-color: #4F00E5;
+    padding: 5px 8px;
+    color: snow;
+}
+.task-list {
+    list-style-position: inside;
+}
+.task-list li {
+    display: grid;
+    width: 100%;
+    grid-template-areas: "before task task task task edite rem"
+}
+.task-list li::before {
+    content: attr(data-index)".";
+    grid-area: before;
+}
+.task-list li button.remove {
+    grid-area: rem;
+}
+.task-list li button.edite {
+    grid-area: edite;
+}
+.task-list li span {
+    display: inline-block;
+    grid-area: task;
+}
